@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuzzMaster | Quiz Buzzer</title>
+
+  <script>
+    const role = localStorage.getItem("role");
+    const username = localStorage.getItem("username");
+    const loggedIn = sessionStorage.getItem("loggedIn");
+
+    if (!role || !username || role !== "admin" || loggedIn !== "true") {
+      window.location.href = "index.html";
+    }
+  </script>
+
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+ <style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 20px;
+    padding-bottom: 100px; /* space for footer */
+  }
+
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+
+  button {
+    background-color: #00b894;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background-color: #019875;
+  }
+
+  ol {
+    list-style: decimal;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  li {
+    background-color: #1e1e1e;
+    margin: 10px 0;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    text-align: center;
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #ccc;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    word-wrap: break-word;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 1.5rem;
+    }
+
+    button {
+      width: 100%;
+      font-size: 16px;
+    }
+
+    .controls {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    li {
+      font-size: 15px;
+    }
+
+    footer {
+      font-size: 12px;
+      padding: 10px 15px;
+    }
+  }
+</style>
+
+</head>
+<body>
+
+  <h1>BuzzMaster | Quiz Buzzer -   <span id="adminName"></span></h1>
+
+  <div class="controls">
+    <button onclick="resetBuzzers()">🔄 Reset Buzzers</button>
+    <button onclick="logout()">🚪 Logout</button>
+  </div>
+
+  <ol id="buzzList"></ol>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      sessionStorage.removeItem("loggedIn");
+      window.location.href = "index.html";
+    }
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAquFXG_v-7d_5ApNQC7pZlda8ICj34gY4",
+      authDomain: "quizbuzzer-208aa.firebaseapp.com",
+      databaseURL: "https://quizbuzzer-208aa-default-rtdb.firebaseio.com",
+      projectId: "quizbuzzer-208aa",
+      storageBucket: "quizbuzzer-208aa.appspot.com",
+      messagingSenderId: "625677801119",
+      appId: "1:625677801119:web:324b6c10fa40051737f4aa"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    document.getElementById("adminName").textContent = localStorage.getItem("username");
+
+    const buzzList = document.getElementById("buzzList");
+    
+db.ref("buzzes").on("value", (snapshot) => {
+  const data = snapshot.val();
+  buzzList.innerHTML = ""; // Clear the list
+
+  if (data) {
+    // Convert object to array and sort descending by time
+    const sortedBuzzes = Object.values(data).sort((a, b) => b.time - a.time);
+
+    sortedBuzzes.forEach(buzz => {
+      const li = document.createElement("li");
+      li.textContent = `${buzz.name} - ${new Date(buzz.time).toLocaleTimeString()}`;
+      buzzList.appendChild(li);
+    });
+  }
+});
+
+    function resetBuzzers() {
+      db.ref("buzzes").remove();
+      db.ref("reset").set(Date.now());
+      buzzList.innerHTML = "";
+    }
+  </script>
+   <footer>
+    AHSAn | IT & Media Wing © 2025 Quiz Buzzer App <br><br> Designed by Naseef Ugrapuram
+  </footer>
+</body>
+</html>

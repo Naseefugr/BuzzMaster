@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuzzMaster | Quiz Buzzer - Login</title>
+
+  <!-- 🔒 Redirect if already logged in -->
+  <script>
+    const role = localStorage.getItem("role");
+    const username = localStorage.getItem("username");
+    const loggedIn = sessionStorage.getItem("loggedIn");
+
+    if (loggedIn === "true") {
+      if (role === "admin") {
+        window.location.href = "admin.html";
+      } else if (role === "candidate") {
+        window.location.href = "candidate.html";
+      }
+    }
+  </script>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 150px;
+    color: #ffffff;
+    text-align: center;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #bbbbbb;
+  }
+
+  form {
+    width: 100%;
+    max-width: 350px;
+    background: #1e1e1e;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background-color: #2a2a2a;
+    color: #fff;
+  }
+
+  input::placeholder {
+    color: #aaa;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    background-color: #00b894;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s;
+  }
+
+  button:hover {
+    background-color: #019875;
+  }
+
+  .divider {
+    margin: 30px 0 20px;
+    font-weight: 500;
+    font-size: 18px;
+    color: #999;
+  }
+
+  .join-btn {
+    max-width: 350px;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #0984e3;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .join-btn:hover {
+    background-color: #076fc2;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #1e1e1e;
+    text-align: center;
+    padding: 12px 15px;
+    font-size: 14px;
+    color: #aaa;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+    }
+
+    form {
+      padding: 20px;
+    }
+
+    footer {
+      font-size: 12px;
+      padding: 10px;
+    }
+  }
+</style>
+
+</head>
+<body>
+
+  <h1>BuzzMaster | Quiz Buzzer</h1>
+
+  <form onsubmit="adminLogin(event)">
+    <h2>Admin Login</h2>
+    <input type="text" id="adminUser" placeholder="Username" required />
+    <input type="password" id="adminPass" placeholder="Password" required />
+    <button type="submit">Login as Admin</button>
+  </form>
+
+  <div class="divider">OR</div>
+
+  <button class="join-btn" onclick="joinAsCandidate()">Join as Candidate</button>
+
+  <script>
+    function adminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById("adminUser").value.trim();
+      const pass = document.getElementById("adminPass").value.trim();
+
+      if (user === "naseefugr" && pass === "1022") {
+        localStorage.setItem("username", "Admin");
+        localStorage.setItem("role", "admin");
+        sessionStorage.setItem("loggedIn", "true");
+        window.location.href = "admin.html";
+      } else {
+        alert("Invalid credentials");
+      }
+    }
+
+    function joinAsCandidate() {
+      const name = prompt("Enter your name:");
+      if (name && name.trim()) {
+        localStorage.setItem("username", name.trim());
+        localStorage.setItem("role", "candidate");
+        sessionStorage.setItem("loggedIn", "true");
+        window.location.href = "candidate.html";
+      }
+    }
+  </script>
+   <footer>
+     AHSAn | IT & Media Wing © 2025 Quiz Buzzer App <br><br> Designed by Naseef Ugrapuram
+  </footer>
+</body>
+</html>

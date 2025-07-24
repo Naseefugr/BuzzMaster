@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BuzzMaster | Quiz Buzzer</title>
+
+  <!-- 🔒 Access Check -->
+  <script>
+    const role = localStorage.getItem("role");
+    const username = localStorage.getItem("username");
+    const loggedIn = sessionStorage.getItem("loggedIn");
+
+    if (!role || !username || role !== "candidate" || loggedIn !== "true") {
+      window.location.href = "index.html";
+    }
+  </script>
+
+  <!-- ✅ Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+  <!-- ✅ Styling -->
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #121212;
+      color: #f1f1f1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 80vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 40px;
+      text-align: center;
+      color: #ffffff;
+    }
+
+    #buzzBtn {
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      font-size: 1.8rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 0 20px #28a74580;
+    }
+
+    #buzzBtn:hover {
+      background-color: #218838;
+      transform: scale(1.05);
+    }
+
+    #buzzBtn:disabled {
+      background-color: #2e2e2e;
+      color: #bbb;
+      cursor: not-allowed;
+    }
+
+    .logout-btn {
+      margin-top: 40px;
+      padding: 16px 28px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 6px;
+      background-color: #e63946;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #c82333;
+    }
+    header {
+  width: 100%;
+  background-color: #111;
+  padding: 20px 0;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  z-index: 999;
+}
+
+.header-content h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+body {
+  padding-top: 100px; /* to avoid content being hidden under fixed header */
+}
+
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #1e1e1e;
+      text-align: center;
+      padding: 12px;
+      font-size: 14px;
+      color: #aaa;
+      box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      #buzzBtn {
+        width: 300px;
+        height: 300px;
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+  <div class="header-content">
+    <h2>BuzzMaster | Quiz Buzzer - Candidate Panel</h2>
+  </div>
+</header>
+  <h1>Hello, <span id="username"></span></h1>
+  <button id="buzzBtn" onclick="buzz()">BUZZ!</button>
+
+  <!-- 🔊 Buzz Sound -->
+  <audio id="buzzSound" src="buzz.mp3" preload="auto"></audio>
+
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
+  <!-- ✅ Scripts -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAquFXG_v-7d_5ApNQC7pZlda8ICj34gY4",
+      authDomain: "quizbuzzer-208aa.firebaseapp.com",
+      databaseURL: "https://quizbuzzer-208aa-default-rtdb.firebaseio.com",
+      projectId: "quizbuzzer-208aa",
+      storageBucket: "quizbuzzer-208aa.appspot.com",
+      messagingSenderId: "625677801119",
+      appId: "1:625677801119:web:324b6c10fa40051737f4aa",
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const name = localStorage.getItem("username");
+    document.getElementById("username").textContent = name;
+    const buzzBtn = document.getElementById("buzzBtn");
+    const buzzSound = document.getElementById("buzzSound");
+
+    function buzz() {
+      const buzzTime = Date.now();
+      db.ref("buzzes/" + buzzTime).set({ name: name, time: buzzTime }).then(() => {
+        buzzSound.play();
+        buzzBtn.disabled = true;
+        buzzBtn.textContent = "Buzzed!";
+      });
+    }
+
+    db.ref("reset").on("value", () => {
+      buzzBtn.disabled = false;
+      buzzBtn.textContent = "BUZZ!";
+    });
+
+    function logout() {
+      localStorage.removeItem("role");
+      localStorage.removeItem("username");
+      sessionStorage.removeItem("loggedIn");
+      window.location.href = "index.html";
+    }
+  </script>
+   <footer>
+    AHSAn | IT & Media Wing © 2025 Quiz Buzzer App <br><br> Designed by Naseef Ugrapuram
+  </footer>
+</body>
+</html>
